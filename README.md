@@ -19,3 +19,10 @@ If you have data of your own to contribute of any kind, please do.
 # origin
 These lists were originally compiled by Mike Steinbaugh here (https://docs.google.com/spreadsheets/d/1vGNU2CCxpaoTCLvzOxK1hf5gjULrf2-CpgCp9bOfGJ0)
 and (https://docs.google.com/spreadsheets/d/1qA5ktYeimNGpZF1UPSQZATbpzEqgyxN6daoMOjv6YYw). We moved them here to give better access to the community so we can work together on improving them. Moving to git also lets us address specific versions by git hashes, so we can be sure which versions of the markers we have used.
+
+# Changes
+
+2018-10-19: Zebrafish Cell cycle and cell type genes added using homology information against Homo sapines. 
+Script found at `code` folder. It uses biomaRt and only one2one orthology type and high orthology confidence. 
+
+Note that additional information columns (i.e: highConf,scaffold,notes in cell type are inherited from Homo sapiens tables and *not* curated for Danio rerio).
