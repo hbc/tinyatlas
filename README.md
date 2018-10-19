@@ -25,4 +25,4 @@ and (https://docs.google.com/spreadsheets/d/1qA5ktYeimNGpZF1UPSQZATbpzEqgyxN6dao
 2018-10-19: Zebrafish Cell cycle and cell type genes added using homology information against Homo sapines. 
 Script found at `code` folder. It uses biomaRt and only one2one orthology type and high orthology confidence. 
 
-Note that additional information columns (i.e: highConf,scaffold,notes in cell type are inherited from Homo sapiens tables and *not* curated for Danio rerio).
+Note that additional information columns (i.e: highConf,scaffold,notes in cell type are inherited from Homo sapiens tables and **not** curated for Danio rerio).
