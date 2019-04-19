@@ -109,7 +109,7 @@ zebrafish_ct_genes$modified <- Sys.Date()
 ## Save file
 
 ```{r}
-rio::export(zebrafish_cc_genes, file = file.path("..","cell_type","Danio_rerio.csv"))
+rio::export(zebrafish_ct_genes, file = file.path("..","cell_type","Danio_rerio.csv"))
 ```
 
 
