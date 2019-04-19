@@ -25,4 +25,4 @@ and (https://docs.google.com/spreadsheets/d/1qA5ktYeimNGpZF1UPSQZATbpzEqgyxN6dao
 2018-10-19: Zebrafish Cell cycle and cell type genes added using homology information against Homo sapiens. 
 Script found at `code` folder. It uses biomaRt and only one2one orthology type and high orthology confidence.
 
-2019-04-19: Found type in code for `gene2Drerio.Rmd` that was saving the wrong object. Corrected and uploaded the correct file.
+2019-04-19: Found typo in code for `gene2Drerio.Rmd` that was saving the wrong object. Corrected and uploaded the correct file.
