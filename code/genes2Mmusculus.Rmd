@@ -1,0 +1,116 @@
+---
+title: "genes2Mmusculus"
+author: "Victor Barrera"
+date: "08/31/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(biomaRt)
+library(RCurl)
+library(dplyr)
+library(rio)
+```
+
+# Cell Cycle
+
+## Download latest human version
+
+```{r}
+human_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Homo_sapiens.csv")
+human_cc_genes <- read.csv(text = human_cc_genes_file)
+```
+
+## Download Ensembl data
+```{r}
+ensembl <- useMart("ensembl")
+ensembl.human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+```
+
+## Obtain ortholog information
+
+```{r}
+ortholog_info <-getBM(attributes = c('ensembl_gene_id','mmusculus_homolog_ensembl_gene','mmusculus_homolog_orthology_type','mmusculus_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_cc_genes$geneID, mart = ensembl.human)
+```
+
+## Filter orthologs. 
+
+We only keep the ones with one2one orthology type and high orthology confidence
+
+```{r}
+mouse_selected_genes <- ortholog_info %>% dplyr::filter(mmusculus_homolog_orthology_type == "ortholog_one2one",mmusculus_homolog_orthology_confidence == 1)
+```
+
+## Add CC info
+
+```{r}
+mouse_cc_genes <- mouse_selected_genes %>% dplyr::inner_join(human_cc_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
+    dplyr::select(phase,geneID=mmusculus_homolog_ensembl_gene) %>% dplyr::arrange(phase)
+```
+
+## Add date
+
+```{r}
+mouse_cc_genes$modified <- Sys.Date()
+```
+
+## Save file
+
+```{r}
+rio::export(mouse_cc_genes, file = file.path("..","cell_cycle","Mus_musculus.csv"))
+```
+
+# Cell type
+
+## Download latest human version
+
+```{r}
+human_ct_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_type/Homo_sapiens.csv")
+human_ct_genes <- read.csv(text = human_ct_genes_file)
+```
+
+## Download Ensembl data
+```{r}
+ensembl <- useMart("ensembl")
+ensembl.human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+```
+
+## Obtain ortholog information
+
+```{r}
+ortholog_info <-getBM(attributes = c('ensembl_gene_id','mmusculus_homolog_ensembl_gene','mmusculus_homolog_orthology_type','mmusculus_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_ct_genes$geneID, mart = ensembl.human)
+```
+
+## Filter orthologs. 
+
+We only keep the ones with one2one orthology type and high orthology confidence
+
+```{r}
+mouse_selected_genes <- ortholog_info %>% dplyr::filter(mmusculus_homolog_orthology_type == "ortholog_one2one",mmusculus_homolog_orthology_confidence == 1)
+```
+
+## Add CC info
+
+```{r}
+mouse_ct_genes <- mouse_selected_genes %>% dplyr::inner_join(human_ct_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
+    dplyr::select(cellType,geneID=mmusculus_homolog_ensembl_gene,highConf,scaffold,notes) %>% dplyr::arrange(cellType)
+```
+
+## Add date
+
+```{r}
+mouse_ct_genes$modified <- Sys.Date()
+```
+
+## Save file
+
+```{r}
+rio::export(mouse_ct_genes, file = file.path("..","cell_type","Mus_musculus.csv"))
+```
+
+
+ 
