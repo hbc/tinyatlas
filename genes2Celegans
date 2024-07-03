@@ -18,11 +18,11 @@ library(rio)
 
 # Cell Cycle
 
-## Download latest human version
+## Download latest Caenorhabditis elegans (worm) version
 
 ```{r}
-human_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Homo_sapiens.csv")
-human_cc_genes <- read.csv(text = human_cc_genes_file)
+worm_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Homo_sapiens.csv")
+worm_cc_genes <- read.csv(text = worm_cc_genes_file)
 ```
 
 ## Download Ensembl data
