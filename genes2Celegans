@@ -1,7 +1,7 @@
 ---
 title: "genes2Celegans"
 author: "Reem Hussein-Fricke"
-date: "7/3/2024"
+date: "7/4/2024"
 output: html_document
 ---
 
@@ -18,11 +18,12 @@ library(rio)
 
 # Cell Cycle
 
-## Download latest Caenorhabditis elegans (worm) version
+## Download latest human version using list of sc-RNA-seq cell cycle markers collected by Mike Steinbaugh (available in HBC Github tiny atlas)
+
 
 ```{r}
-worm_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Homo_sapiens.csv")
-worm_cc_genes <- read.csv(text = worm_cc_genes_file)
+human_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Homo_sapiens.csv")
+human_cc_genes <- read.csv(text = human_cc_genes_file)
 ```
 
 ## Download Ensembl data
