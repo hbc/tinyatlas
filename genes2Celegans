@@ -98,7 +98,7 @@ worm_selected_genes <- ortholog_info %>% dplyr::filter(celegans_homolog_ortholog
 
 ```{r}
 worm_ct_genes <- worm_selected_genes %>% dplyr::inner_join(human_ct_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
-    dplyr::select(cellType,geneID=worm_homolog_ensembl_gene,highConf,scaffold,notes) %>% dplyr::arrange(cellType)
+    dplyr::select(cellType,geneID=celegans_homolog_ensembl_gene,highConf,scaffold,notes) %>% dplyr::arrange(cellType)
 ```
 
 ## Add date
