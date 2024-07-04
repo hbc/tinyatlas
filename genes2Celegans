@@ -67,7 +67,7 @@ rio::export(worm_cc_genes, file = file.path("..","cell_cycle","Caenorhabditis_el
 
 # Cell type
 
-## Download latest human version
+## Download latest human version using list of sc-RNA-seq cell type markers collected by Mike Steinbaugh (available in HBC Github tiny atlas)
 
 ```{r}
 human_ct_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_type/Homo_sapiens.csv")
@@ -80,10 +80,10 @@ ensembl <- useMart("ensembl")
 ensembl.human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
 ```
 
-## Obtain ortholog information
+## Obtain Caenorhabditis elegans (worm) ortholog information
 
 ```{r}
-ortholog_info <-getBM(attributes = c('ensembl_gene_id','drerio_homolog_ensembl_gene','drerio_homolog_orthology_type','drerio_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_ct_genes$geneID, mart = ensembl.human)
+ortholog_info <-getBM(attributes = c('ensembl_gene_id','celegans_homolog_ensembl_gene','celegans_homolog_orthology_type','celegans_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_ct_genes$geneID, mart = ensembl.human)
 ```
 
 ## Filter orthologs. 
@@ -91,26 +91,26 @@ ortholog_info <-getBM(attributes = c('ensembl_gene_id','drerio_homolog_ensembl_g
 We only keep the ones with one2one orthology type and high orthology confidence
 
 ```{r}
-zebrafish_selected_genes <- ortholog_info %>% dplyr::filter(drerio_homolog_orthology_type == "ortholog_one2one",drerio_homolog_orthology_confidence == 1)
+worm_selected_genes <- ortholog_info %>% dplyr::filter(celegans_homolog_orthology_type == "ortholog_one2one",celegans_homolog_orthology_confidence == 1)
 ```
 
 ## Add CC info
 
 ```{r}
-zebrafish_ct_genes <- zebrafish_selected_genes %>% dplyr::inner_join(human_ct_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
-    dplyr::select(cellType,geneID=drerio_homolog_ensembl_gene,highConf,scaffold,notes) %>% dplyr::arrange(cellType)
+worm_ct_genes <- worm_selected_genes %>% dplyr::inner_join(human_ct_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
+    dplyr::select(cellType,geneID=worm_homolog_ensembl_gene,highConf,scaffold,notes) %>% dplyr::arrange(cellType)
 ```
 
 ## Add date
 
 ```{r}
-zebrafish_ct_genes$modified <- Sys.Date()
+worm_ct_genes$modified <- Sys.Date()
 ```
 
 ## Save file
 
 ```{r}
-rio::export(zebrafish_ct_genes, file = file.path("..","cell_type","Danio_rerio.csv"))
+rio::export(worm_ct_genes, file = file.path("..","cell_type","Caenorhabditis_elegans.csv"))
 ```
 
 
