@@ -26,16 +26,16 @@ human_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/m
 human_cc_genes <- read.csv(text = human_cc_genes_file)
 ```
 
-## Download Ensembl data
+## Download Ensembl human gene data
 ```{r}
 ensembl <- useMart("ensembl")
 ensembl.human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
 ```
 
-## Obtain ortholog information
+## Obtain Caenhorhabiditis elegans (worm) ortholog information
 
 ```{r}
-ortholog_info <-getBM(attributes = c('ensembl_gene_id','drerio_homolog_ensembl_gene','drerio_homolog_orthology_type','drerio_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_cc_genes$geneID, mart = ensembl.human)
+ortholog_info <-getBM(attributes = c('ensembl_gene_id','celegans_homolog_ensembl_gene','celegans_homolog_orthology_type','celegans_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_cc_genes$geneID, mart = ensembl.human)
 ```
 
 ## Filter orthologs. 
@@ -43,26 +43,26 @@ ortholog_info <-getBM(attributes = c('ensembl_gene_id','drerio_homolog_ensembl_g
 We only keep the ones with one2one orthology type and high orthology confidence
 
 ```{r}
-zebrafish_selected_genes <- ortholog_info %>% dplyr::filter(drerio_homolog_orthology_type == "ortholog_one2one",drerio_homolog_orthology_confidence == 1)
+worm_selected_genes <- ortholog_info %>% dplyr::filter(celegans_homolog_orthology_type == "ortholog_one2one",celegans_homolog_orthology_confidence == 1)
 ```
 
-## Add CC info
+## Add cell cycle info
 
 ```{r}
-zebrafish_cc_genes <- zebrafish_selected_genes %>% dplyr::inner_join(human_cc_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
-    dplyr::select(phase,geneID=drerio_homolog_ensembl_gene) %>% dplyr::arrange(phase)
+worm_cc_genes <- worm_selected_genes %>% dplyr::inner_join(human_cc_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
+    dplyr::select(phase,geneID=celegans_homolog_ensembl_gene) %>% dplyr::arrange(phase)
 ```
 
 ## Add date
 
 ```{r}
-zebrafish_cc_genes$modified <- Sys.Date()
+worm_cc_genes$modified <- Sys.Date()
 ```
 
 ## Save file
 
 ```{r}
-rio::export(zebrafish_cc_genes, file = file.path("..","cell_cycle","Danio_rerio.csv"))
+rio::export(worm_cc_genes, file = file.path("..","cell_cycle","Caenorhabditis_elegans.csv"))
 ```
 
 # Cell type
