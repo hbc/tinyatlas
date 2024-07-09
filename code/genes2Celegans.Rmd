@@ -65,53 +65,5 @@ worm_cc_genes$modified <- Sys.Date()
 rio::export(worm_cc_genes, file = file.path("..","cell_cycle","Caenorhabditis_elegans.csv"))
 ```
 
-# Cell type
-
-## Download latest human version using list of sc-RNA-seq cell type markers collected by Mike Steinbaugh (available in HBC Github tiny atlas)
-
-```{r}
-human_ct_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_type/Homo_sapiens.csv")
-human_ct_genes <- read.csv(text = human_ct_genes_file)
-```
-
-## Download Ensembl data
-```{r}
-ensembl <- useMart("ensembl")
-ensembl.human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-```
-
-## Obtain Caenorhabditis elegans (worm) ortholog information
-
-```{r}
-ortholog_info <-getBM(attributes = c('ensembl_gene_id','celegans_homolog_ensembl_gene','celegans_homolog_orthology_type','celegans_homolog_orthology_confidence'),filters = 'ensembl_gene_id',values =human_ct_genes$geneID, mart = ensembl.human)
-```
-
-## Filter orthologs. 
-
-We only keep the ones with one2one orthology type and high orthology confidence
-
-```{r}
-worm_selected_genes <- ortholog_info %>% dplyr::filter(celegans_homolog_orthology_type == "ortholog_one2one",celegans_homolog_orthology_confidence == 1)
-```
-
-## Add CC info
-
-```{r}
-worm_ct_genes <- worm_selected_genes %>% dplyr::inner_join(human_ct_genes, by = c("ensembl_gene_id" = "geneID")) %>% 
-    dplyr::select(cellType,geneID=celegans_homolog_ensembl_gene,highConf,scaffold,notes) %>% dplyr::arrange(cellType)
-```
-
-## Add date
-
-```{r}
-worm_ct_genes$modified <- Sys.Date()
-```
-
-## Save file
-
-```{r}
-rio::export(worm_ct_genes, file = file.path("..","cell_type","Caenorhabditis_elegans.csv"))
-```
-
 
  
