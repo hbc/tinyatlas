@@ -1,0 +1,79 @@
+---
+title: "genes2CLfamiliaris"
+author: "Erda Alexandria Kouri"
+date: "2025-03-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(biomaRt)
+library(RCurl)
+library(dplyr)
+library(rio)
+```
+
+# Cell Cycle
+
+## Download latest human version using list of sc-RNA-seq cell cycle markers collected by Mike Steinbaugh (available in HBC Github tiny atlas)
+
+
+```{r}
+human_cc_genes_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Homo_sapiens.csv")
+human_cc_genes <- read.csv(text = human_cc_genes_file)
+```
+
+## Download Ensembl data for hsapiens
+```{r}
+ensembl <- useMart("ensembl")
+ensembl.human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+```
+
+## Retrieve ortholog information for Canis lupus familiaris (Dog)
+
+```{r}
+ensembl.clf <- useMart("ensembl", dataset = "clfamiliaris_gene_ensembl")
+
+clf_ortholog_information <-
+  getBM(
+    attributes = c(
+      'ensembl_gene_id',
+      'clfamiliaris_homolog_ensembl_gene',
+      'clfamiliaris_homolog_orthology_type',
+      'clfamiliaris_homolog_orthology_confidence'
+    ),
+    filters = 'ensembl_gene_id',
+    values = human_cc_genes$geneID,
+    mart = ensembl.human
+  )
+```
+
+## Retain only the ones with one2one orthology type and high orthology confidence
+
+```{r}
+clf_selected_genes <- clf_ortholog_information %>% dplyr::filter(clfamiliaris_homolog_orthology_type == "ortholog_one2one",
+                                                                   clfamiliaris_homolog_orthology_confidence == 1)
+```
+
+## Add cell cycle information
+```{r}
+clf_cc_genes <- clf_selected_genes %>% dplyr::inner_join(human_cc_genes, by = c("ensembl_gene_id" = "geneID")) %>%
+  dplyr::select(phase, geneID = clfamiliaris_homolog_ensembl_gene) %>% dplyr::arrange(phase)
+```
+
+## Add date
+
+```{r}
+clf_cc_genes$modified <- Sys.Date()
+```
+
+
+## Save output
+
+```{r}
+rio::export(clf_cc_genes, file = file.path("..","clfamiliaris.csv"))
+```
+
